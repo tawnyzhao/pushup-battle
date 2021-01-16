@@ -36,11 +36,11 @@ scores = {};
 io.on("connection", (socket) => {
   socket.join("room1"); // only 1 room for now
   socket.emit("pull score", scores),
-    socket.on("push score", (msg) => {
-      console.log(`new score ${socket.id}:${msg}`);
-      scores[socket.id] = msg;
-      io.to("room1").emit("pull score", scores);
-    });
+  socket.on("push score", (msg) => {
+    console.log(`new score ${socket.id}:${msg}`);
+    scores[socket.id] = msg;
+    io.to("room1").emit("pull score", scores);
+  });
 
   socket.on("disconnecting", () => {
     delete scores[socket.id];

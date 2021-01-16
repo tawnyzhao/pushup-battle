@@ -1,9 +1,24 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:9000");
+const socket = io("http://localhost:9000", {autoConnect: false});
 
-socket.on("connect", () => {
-  console.log(socket.id);
-});
+/* Get socket id */
+function onConnect(callback) {
+  socket.on('connect', () => callback(socket.id))
+}
 
-export default socket;
+function pushScore(score) {
+  socket.emit('push score', score)
+};
+
+function pullScore(callback) {
+  socket.on('pull score', scores => callback(scores))
+}
+
+export {
+  socket,
+  onConnect,
+  pushScore,
+  pullScore
+};
+

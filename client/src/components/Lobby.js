@@ -1,7 +1,7 @@
 import { INITIAL_COUNTER, step } from "../util/fsm";
 import Cam from "./Cam";
 import React, { Component } from "react";
-import socket from "../util/socket";
+import { socket, pullScore, pushScore, onConnect } from '../util/socket';
 
 class Lobby extends Component {
   constructor(props) {
@@ -10,20 +10,23 @@ class Lobby extends Component {
       counter: INITIAL_COUNTER,
       scores: {},
       names: {},
-      id: socket.id,
+      id: ""
     };
-
-    socket.on("pull score", (scores) => {
-      this.setState({ scores });
-    });
-
     this.update = this.update.bind(this);
+  }
+
+  componentDidMount() {
+    onConnect((id) => this.setState({ id }))
+    socket.open()
+
+    this.setState({id: socket.id})
+    pullScore((scores) => this.setState({ scores }))
   }
 
   update(nextState) {
     const nextCounter = step(this.state.counter, nextState);
     if (nextCounter.count != this.state.counter.count) {
-      socket.emit("push state", nextCounter.count);
+      pushScore(nextCounter.count);
     }
     this.setState({ counter: nextCounter });
   }
