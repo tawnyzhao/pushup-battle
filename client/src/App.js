@@ -18,10 +18,6 @@ function App() {
       <header className="App-header">
       </header>
       <Cam></Cam>
-      <div style={{color:'black'}}onClick={() => {socket.emit('push score', 32);}}> 
-      push 
-      </div>
-      {Object.entries(score)}
     </div>
   );
 }
