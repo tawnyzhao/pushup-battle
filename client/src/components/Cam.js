@@ -5,49 +5,72 @@ import {
 } from "@mediapipe/drawing_utils/drawing_utils";
 import { Camera } from "@mediapipe/camera_utils/camera_utils";
 import { Pose } from "@mediapipe/pose/pose";
+import "./Cam.css";
+
+import { STATES, Counter } from "../util/fsm";
+
+const POSE_CONNECTIONS = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 7],
+  [0, 4],
+  [4, 5],
+  [5, 6],
+  [6, 8],
+  [9, 10],
+  [11, 12],
+  [11, 13],
+  [13, 15],
+  [15, 17],
+  [15, 19],
+  [15, 21],
+  [17, 19],
+  [12, 14],
+  [14, 16],
+  [16, 18],
+  [16, 20],
+  [16, 22],
+  [18, 20],
+  [11, 23],
+  [12, 24],
+  [23, 24],
+  [23, 25],
+  [24, 26],
+  [25, 27],
+  [26, 28],
+  [27, 29],
+  [28, 30],
+  [29, 31],
+  [30, 32],
+  [27, 31],
+  [28, 32],
+];
+
+function getState(p1y, p1x, p2y, p2x, p3y, p3x) {
+  let downAngle = 2.1;
+  let upAngle = 2.5;
+  let state = STATES["NONE"];
+  let angle = Math.abs(
+    Math.atan2(p3y - p1y, p3x - p1x) - Math.atan2(p2y - p1y, p2x - p1x)
+  );
+  if (angle > upAngle) {
+    state = STATES["UP"];
+  } else if (angle < downAngle) {
+    state = STATES["DOWN"];
+  } else {
+    state = STATES["NONE"];
+  }
+  return state;
+}
 
 export default function Cam() {
+  let counter = new Counter();
+
   useEffect(() => {
     const videoElement = document.getElementsByClassName("input_video")[0];
     const canvasElement = document.getElementsByClassName("output_canvas")[0];
     const canvasCtx = canvasElement.getContext("2d");
-    const POSE_CONNECTIONS = [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [3, 7],
-      [0, 4],
-      [4, 5],
-      [5, 6],
-      [6, 8],
-      [9, 10],
-      [11, 12],
-      [11, 13],
-      [13, 15],
-      [15, 17],
-      [15, 19],
-      [15, 21],
-      [17, 19],
-      [12, 14],
-      [14, 16],
-      [16, 18],
-      [16, 20],
-      [16, 22],
-      [18, 20],
-      [11, 23],
-      [12, 24],
-      [23, 24],
-      [23, 25],
-      [24, 26],
-      [25, 27],
-      [26, 28],
-      [27, 29],
-      [28, 30],
-      [29, 31],
-      [30, 32],
-      [27, 31],
-      [28, 32],
-    ];
 
     function onResults(results) {
       canvasCtx.save();
@@ -71,23 +94,33 @@ export default function Cam() {
       canvasCtx.textAlign = "left";
       canvasCtx.textBaseline = "top";
 
+      let currentState = STATES.NONE;
+
       if (results.poseLandmarks != undefined) {
-        if (
-          Math.abs(
-            getAngle(
-              results.poseLandmarks[14].y,
-              results.poseLandmarks[14].x,
-              results.poseLandmarks[16].y,
-              results.poseLandmarks[16].x,
-              results.poseLandmarks[12].y,
-              results.poseLandmarks[12].x
-            )
-          ) > 1.7
-        ) {
-          canvasCtx.fillText("Extended", 0, 0);
+        currentState = getState(
+          results.poseLandmarks[14].y,
+          results.poseLandmarks[14].x,
+          results.poseLandmarks[16].y,
+          results.poseLandmarks[16].x,
+          results.poseLandmarks[12].y,
+          results.poseLandmarks[12].x
+        );
+
+        counter.step(currentState);
+      }
+
+      canvasCtx.fillText(counter.count, 0, 100);
+      canvasCtx.stroke();
+      // display state on canvas
+      if (results.poseLandmarks != undefined) {
+        if (currentState == STATES.UP) {
+          canvasCtx.fillText("Up", 0, 0);
+          canvasCtx.stroke();
+        } else if (currentState == STATES.DOWN) {
+          canvasCtx.fillText("Down", 0, 0);
           canvasCtx.stroke();
         } else {
-          canvasCtx.fillText("Down", 0, 0);
+          canvasCtx.fillText("None", 0, 0);
           canvasCtx.stroke();
         }
       }
@@ -96,11 +129,6 @@ export default function Cam() {
     }
 
     // p1 is axis of angle, p2 and p3 are the arms
-    function getAngle(p1y, p1x, p2y, p2x, p3y, p3x) {
-      return (
-        Math.atan2(p3y - p1y, p3x - p1x) - Math.atan2(p2y - p1y, p2x - p1x)
-      );
-    }
 
     const pose = new Pose({
       locateFile: (file) => {
@@ -109,10 +137,10 @@ export default function Cam() {
     });
 
     pose.setOptions({
-      upperBodyOnly: false,
+      upperBodyOnly: true,
       smoothLandmarks: true,
-      minDetectionConfidence: 0.6,
-      minTrackingConfidence: 0.9,
+      minDetectionConfidence: 0.4,
+      minTrackingConfidence: 0.8,
     });
     pose.onResults(onResults);
 
@@ -127,7 +155,7 @@ export default function Cam() {
   }, []);
 
   return (
-    <div>
+    <div class="container">
       <video class="input_video"></video>
       <canvas class="output_canvas" width="1280px" height="720px"></canvas>
     </div>
