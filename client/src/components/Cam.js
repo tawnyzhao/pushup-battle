@@ -64,9 +64,7 @@ function getState(p1y, p1x, p2y, p2x, p3y, p3x) {
   return state;
 }
 
-export default function Cam() {
-  let counter = new Counter();
-
+export default function Cam(props) {
   useEffect(() => {
     const videoElement = document.getElementsByClassName("input_video")[0];
     const canvasElement = document.getElementsByClassName("output_canvas")[0];
@@ -105,14 +103,10 @@ export default function Cam() {
           results.poseLandmarks[12].y,
           results.poseLandmarks[12].x
         );
-
-        counter.step(currentState);
-
-        canvasCtx.fillText(counter.count, 0, 100);
         canvasCtx.stroke();
 
         // display state on canvas
-        if (results.poseLandmarks[14].visibility < 0.3) {
+        if (results.poseLandmarks[14].visibility < 0.6) {
           canvasCtx.fillText("None", 0, 0);
           canvasCtx.stroke();
         } else if (currentState == STATES.UP) {
@@ -126,7 +120,7 @@ export default function Cam() {
           canvasCtx.stroke();
         }
       }
-
+      props.onResult(currentState);
       canvasCtx.restore();
     }
 
@@ -154,7 +148,7 @@ export default function Cam() {
       height: 720,
     });
     camera.start();
-  }, []);
+  }, [props.onResult]);
 
   return (
     <div class="container">
