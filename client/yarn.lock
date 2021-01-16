@@ -1398,10 +1398,10 @@
   resolved "https://registry.yarnpkg.com/@mediapipe/drawing_utils/-/drawing_utils-0.1.1607547345.tgz#ab81f0e49f255f0d308a6ca7298a8789aeaee428"
   integrity sha512-WiHSEUBS85HCl+zJRKQx6yAWoSIhaUHy1sIegJCCwvhNlsxVJRhLHht/egiA5hpHAZhcC7dOjKYjgHwVptgoEQ==
 
-"@mediapipe/holistic@^0.1.1607486640":
-  version "0.1.1607486640"
-  resolved "https://registry.yarnpkg.com/@mediapipe/holistic/-/holistic-0.1.1607486640.tgz#0621bb9b2cae89662b427f6411eae045d5ed5542"
-  integrity sha512-t7MDazT5ckAm//wfTiAz88IiC6XOTeDXKz9iFwsuqsEqYAUI1mh60qCHdPAnh1v+EedDcL5jmIGLHvXMgzfb3w==
+"@mediapipe/pose@^0.1.1607559092":
+  version "0.1.1607559092"
+  resolved "https://registry.yarnpkg.com/@mediapipe/pose/-/pose-0.1.1607559092.tgz#b17cd922bea51090e8d5a7b4a347d1c5ae23744c"
+  integrity sha512-9kyAbpy2pwBG8fof0tyHHu3fpYzN/3L2C9NtytEz5L5Oo2wqXoWdLYzY/PGlT8qRrVQWO55pquEXnkGkbq8Htg==
 
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"
