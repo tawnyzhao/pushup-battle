@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   drawConnectors,
   drawLandmarks,
@@ -107,13 +107,15 @@ export default function Cam() {
         );
 
         counter.step(currentState);
-      }
 
-      canvasCtx.fillText(counter.count, 0, 100);
-      canvasCtx.stroke();
-      // display state on canvas
-      if (results.poseLandmarks != undefined) {
-        if (currentState == STATES.UP) {
+        canvasCtx.fillText(counter.count, 0, 100);
+        canvasCtx.stroke();
+
+        // display state on canvas
+        if (results.poseLandmarks[14].visibility < 0.3) {
+          canvasCtx.fillText("None", 0, 0);
+          canvasCtx.stroke();
+        } else if (currentState == STATES.UP) {
           canvasCtx.fillText("Up", 0, 0);
           canvasCtx.stroke();
         } else if (currentState == STATES.DOWN) {
