@@ -1,23 +1,23 @@
-import logo from './logo.svg';
+import Cam from './components/Cam';
+import { useState } from 'react';
 import './App.css';
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:9000');
 
 function App() {
+  const [score, updateScore] = useState({});
+  
+  socket.on("connect", () => {
+    console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+  });
+  socket.on("pull score", updateScore);
+
+  
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <Cam></Cam>
     </div>
   );
 }
