@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import pushupman from "../assets/images/pushupman.png";
+import { api } from "../env/server.config";
+
 class Landing extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +22,7 @@ class Landing extends Component {
   }
 
   async handleSubmit(event) {
-    let res = await fetch('http://localhost:9000/session', {
+    let res = await fetch(api + '/session', {
       method: 'POST', 
       mode: 'cors', 
       headers: { 'Content-Type': 'application/json' },
@@ -31,7 +33,7 @@ class Landing extends Component {
   }
 
   async create() {
-    let res = await fetch("http://localhost:9000/session");
+    let res = await fetch(api + '/session');
     let data = await res.json();
     this.props.updateSession(data);
   }
@@ -47,8 +49,8 @@ class Landing extends Component {
   }
 
   render() {
-    const { id } = this.state;
-    const { createRoom } = this.props;
+    const { id } = this.state.id;
+    // const { createRoom } = this.props;
     return (
       <div className="container w-1/2 flex flex-col mx-auto my-64 space-y-4 px-4">
         <img
@@ -76,7 +78,7 @@ class Landing extends Component {
               onChange={this.handleChange}
               value={id}
               type="text"
-              maxlength="4"
+              maxLength="4"
               className="flex-grow py-2 px-4 font-semibold rounded-lg border shadow-sm focus:outline-none bg-gray-100 focus:bg-white text-center"
               placeholder="Enter Room Code"
             />

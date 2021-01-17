@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+import { api } from "../env/server.config";
 
-const socket = io("http://localhost:9000", { autoConnect: false });
+const socket = io(api, { autoConnect: false });
 
 /* Get socket id */
 function onConnect(callback) {
