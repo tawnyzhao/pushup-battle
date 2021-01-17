@@ -64,25 +64,26 @@ class Landing extends Component {
           <div className="pb-10 pt-4 flex">
             <button
               type="button"
-              className="flex-grow py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-lg active:bg-blue-700 focus:outline-none"
+              className="flex-grow py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-600 active:bg-blue-700 focus:outline-none"
               onClick={this.create}
             >
               New Room  🥊
             </button>
           </div>
-          <div className="pb-2 flex">
+          <div className="pb-2 flex justify-center">
             <input
               onKeyPress={this.handleKey}
               onChange={this.handleChange}
               value={id}
               type="text"
-              className="flex-grow py-2 px-4 font-semibold rounded-lg border shadow-sm focus:outline-none text-center"
+              maxlength="4"
+              className="flex-grow py-2 px-4 font-semibold rounded-lg border shadow-sm focus:outline-none bg-gray-100 focus:bg-white text-center"
               placeholder="Enter Room Code"
             />
           </div>
           <button
             onClick={this.handleSubmit}
-            className="flex-initial py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-lg active:bg-green-700 focus:outline-none"
+            className="flex-initial py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-lg hover:bg-green-600 active:bg-green-700 focus:outline-none"
           >
             Join Room ⚔️
           </button>
