@@ -48,6 +48,7 @@ class Lobby extends Component {
     );
   }
 
+  // handles setting gameEnded, gameStarted, and countingDown states based on current time
   componentDidUpdate() {
     if (this.state.gameStarted === true) {
       if (this.state.gameTimeEnd - Date.now() < 0) {
@@ -66,6 +67,7 @@ class Lobby extends Component {
     }
   }
 
+  // runs when onResult is called in the Camera object
   update(nextState) {
     if (this.state.gameStarted && this.state.countingDown === false) {
       const nextCounter = step(this.state.counter, nextState);
@@ -78,6 +80,7 @@ class Lobby extends Component {
     }
   }
 
+  //sends ping to start game to server
   startGame() {
     let endDate = Date.now() + gameLength + 5000;
     pushStart(endDate);
@@ -122,6 +125,8 @@ class Lobby extends Component {
               gameLength / 1000
             : null}
         </h1>
+
+        {/* displaying users and their scores */}
         {Object.entries(this.state.scores).map(([id, score]) => (
           <p>{`${this.state.names[id] || ""}: ${score}`}</p>
         ))}
