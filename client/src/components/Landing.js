@@ -45,29 +45,35 @@ class Landing extends Component {
     const { createRoom } = this.props;
     return (
       <div className="container w-1/2 flex flex-col mx-auto my-64 space-y-4 px-4">
-        <img src={pushupman} className="w-20 mx-auto"></img>
+        <img
+          src={pushupman}
+          className="w-20 mx-auto"
+          style={{ filter: "drop-shadow(0 0 5px #808080)" }}
+        ></img>
         <h1 className="text-5xl pb-2 font-normal">Pushup Battle</h1>
         <p className="text-xl font-light pb-2">
           Challenge your friends in a pushup contest
         </p>
         <div className="container w-1/4 flex flex-col mx-auto">
-          <div className="space-y-4 flex-grow space-y-4 pb-10 pt-4">
+          <div className="pb-10 pt-4 flex">
             <button
               type="button"
-              className="flex-initial py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md active:bg-blue-700 focus:outline-none"
+              className="flex-grow py-2  bg-blue-500 text-white font-semibold rounded-lg shadow-md active:bg-blue-700 focus:outline-none"
               onClick={this.create}
             >
               New Room
             </button>
           </div>
-          <input
-            onKeyPress={this.handleKey}
-            onChange={this.handleChange}
-            value={id}
-            type="text"
-            className="flex-initial py-2 px-4 font-semibold rounded-lg shadow-md focus:outline-none"
-            placeholder="Enter Room Code"
-          />
+          <div className="pb-2">
+            <input
+              onKeyPress={this.handleKey}
+              onChange={this.handleChange}
+              value={id}
+              type="text"
+              className="flex-initial py-2 px-4 font-semibold rounded-lg shadow-md focus:outline-none text-center"
+              placeholder="Enter Room Code"
+            />
+          </div>
           <button
             onClick={this.handleSubmit}
             className="flex-initial py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md active:bg-green-700 focus:outline-none"
