@@ -46,8 +46,9 @@ io.on("connection", (socket) => {
   // init player
   scores[socket.id] = 0;
   playersReady[socket.id] = false;
-  io.to(DEFAULT_ROOM).emit("pull score", scores);
-
+  
+  // tell players ready state and ids
+  io.to(DEFAULT_ROOM).emit("pull ready", playersReady);
   io.to(DEFAULT_ROOM).emit("pull score", scores);
   // io.to(DEFAULT_ROOM).emit("pull name", names);
 
@@ -83,6 +84,7 @@ io.on("connection", (socket) => {
   socket.on("disconnecting", () => {
     delete scores[socket.id];
     delete names[socket.id];
+    delete playersReady[socket.id];
     io.to(DEFAULT_ROOM).emit("pull score", scores);
     io.to(DEFAULT_ROOM).emit("pull name", names);
 
