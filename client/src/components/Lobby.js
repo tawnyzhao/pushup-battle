@@ -11,6 +11,8 @@ import {
   pullStart,
   onConnect,
   pushStart,
+  pullReady,
+  pushReady
 } from "../util/socket";
 
 import { OTSession, OTPublisher, OTStreams, OTSubscriber, preloadScript } from 'opentok-react';
@@ -24,14 +26,18 @@ class Lobby extends Component {
       counter: INITIAL_COUNTER,
       scores: {},
       names: {},
+      playersReady: {},
       id: "",
+      opponentId: "",
       name: "",
+      ready: false,
       gameStarted: false,
       gameEnded: false,
       gameTimeEnd: -1,
       countingDown: false,
     };
     this.update = this.update.bind(this);
+    this.readyPlayer = this.readyPlayer.bind(this);
     this.startGame = this.startGame.bind(this);
   }
 
@@ -40,8 +46,20 @@ class Lobby extends Component {
     socket.open();
 
     this.setState({ id: socket.id });
-    pullScore((scores) => this.setState({ scores }));
+    pullScore((scores) => {
+      let ids = Object.keys(scores)
+      if (ids.length === 2) {
+        for (let id of ids) {
+          console.log(id, this.state.id)
+          if (id !== this.state.id) {
+            this.setState({ opponentId: id});
+          }
+        }
+      }
+      this.setState({ scores });
+    });
     pullName((names) => this.setState({ names }));
+    pullReady((playersReady) => this.setState({ playersReady }));
     pullStart((endTime) =>
       this.setState({
         gameTimeEnd: endTime,
@@ -74,13 +92,20 @@ class Lobby extends Component {
   update(nextState) {
     if (this.state.gameStarted && this.state.countingDown === false) {
       const nextCounter = step(this.state.counter, nextState);
-      if (nextCounter.count != this.state.counter.count) {
+      if (nextCounter.count !== this.state.counter.count) {
         pushScore(nextCounter.count);
       }
       this.setState({ counter: nextCounter });
     } else {
       this.setState({});
     }
+  }
+
+  readyPlayer() {
+    this.setState({ ready: !this.state.ready}, () => {
+      console.log(this.state.ready ? "ready" : "unready");
+      pushReady(this.state.ready);
+    });
   }
 
   //sends ping to start game to server
@@ -107,7 +132,9 @@ class Lobby extends Component {
             this.setState({ name });
           }}
         />
-        <button onClick={this.startGame}>START</button>
+        <button onClick={this.readyPlayer} style={{backgroundColor: this.state.ready ? 'green' : 'red'}}>READY</button>
+        {this.state.opponentId ? 
+          <button style={{backgroundColor: this.state.playersReady[this.state.opponentId] ? 'green' : 'red'}}>READY</button> : null }
 
         {/* game timer */}
         <div>

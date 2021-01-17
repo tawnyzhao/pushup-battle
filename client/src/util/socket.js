@@ -23,12 +23,20 @@ function pullName(callback) {
   socket.on("pull name", (names) => callback(names));
 }
 
+function pushStart(endTime) {
+  socket.emit("push start", endTime);
+}
+
 function pullStart(callback) {
   socket.on("pull start", (endTime) => callback(endTime));
 }
 
-function pushStart(endTime) {
-  socket.emit("push start", endTime);
+function pushReady(ready) {
+  socket.emit("push ready", ready);
+}
+
+function pullReady(callback) {
+  socket.on("pull ready", (playersReady) => callback(playersReady));
 }
 
 export {
@@ -40,4 +48,6 @@ export {
   pullName,
   pullStart,
   pushStart,
+  pullReady,
+  pushReady
 };
