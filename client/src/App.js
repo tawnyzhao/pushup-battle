@@ -1,33 +1,33 @@
 import Cam from "./components/Cam";
 import { useState } from "react";
 import "./App.css";
-import { 
+import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import Lobby from "./components/Lobby";
-import Landing from './components/Landing';
+import Landing from "./components/Landing";
 
 function App() {
   let [session, setSession] = useState({});
   console.log(session);
   return (
-    <Router> 
+    <Router>
       <div className="App">
         <Switch>
           <Route path="/:id">
-            <Lobby session={session}/>
+            <Lobby session={session} />
           </Route>
           <Route exact path="/">
-            {
-              Object.keys(session).length != 0 ? 
-              <Redirect to={`/${session.roomID}`} /> :
-              <Landing updateSession={setSession}/>
-            }
+            {Object.keys(session).length != 0 ? (
+              <Redirect to={`/${session.roomID}`} />
+            ) : (
+              <Landing updateSession={setSession} />
+            )}
           </Route>
-          </Switch>
+        </Switch>
       </div>
     </Router>
   );
