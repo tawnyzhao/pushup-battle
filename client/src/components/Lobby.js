@@ -12,29 +12,35 @@ import {
   onConnect,
   pushStart,
   pullReady,
-  pushReady
+  pushReady,
 } from "../util/socket";
 
-import { OTSession, OTPublisher, OTStreams, OTSubscriber, preloadScript } from 'opentok-react';
-import './OT.css';
+import {
+  OTSession,
+  OTPublisher,
+  OTStreams,
+  OTSubscriber,
+  preloadScript,
+} from "opentok-react";
+import "./OT.css";
 
 let gameLength = 10000;
 
 function scoreToSize(score) {
   const CLASSES = [
-    'text-lg', 
-    'text-xl', 
-    'text-2xl',
-    'text-3xl',
-    'text-4xl',
-    'text-5xl',
-    'text-6xl',
-    'text-7xl',
-    'text-8xl',
-    'text-9xl' 
-  ]
+    "text-lg",
+    "text-xl",
+    "text-2xl",
+    "text-3xl",
+    "text-4xl",
+    "text-5xl",
+    "text-6xl",
+    "text-7xl",
+    "text-8xl",
+    "text-9xl",
+  ];
   if (score >= CLASSES.length) return CLASSES[CLASSES.length - 1];
-  return CLASSES[score]
+  return CLASSES[score];
 }
 
 class Lobby extends Component {
@@ -65,12 +71,12 @@ class Lobby extends Component {
 
     this.setState({ id: socket.id });
     pullScore((scores) => {
-      let ids = Object.keys(scores)
+      let ids = Object.keys(scores);
       if (ids.length === 2) {
         for (let id of ids) {
-          console.log(id, this.state.id)
+          console.log(id, this.state.id);
           if (id !== this.state.id) {
-            this.setState({ opponentId: id});
+            this.setState({ opponentId: id });
           }
         }
       }
@@ -120,7 +126,7 @@ class Lobby extends Component {
   }
 
   readyPlayer() {
-    this.setState({ ready: !this.state.ready}, () => {
+    this.setState({ ready: !this.state.ready }, () => {
       console.log(this.state.ready ? "ready" : "unready");
       pushReady(this.state.ready);
     });
@@ -137,10 +143,14 @@ class Lobby extends Component {
     return (
       <div className="mx-96">
         <div>
-          <img src={man} className="w-20 mx-auto mt-20"></img>
+          <img
+            src={man}
+            className="w-20 mx-auto mt-20"
+            style={{ filter: "drop-shadow(0 0 5px #808080)" }}
+          ></img>
         </div>
-        <h1 className="text-6xl">Pushup Battle</h1>
-        <h2 className="mt-2 text-xl">Room Code:  {this.props.session.roomID}</h2>
+        <h1 className="text-6xl font-light pb-1">Pushup Battle</h1>
+        <h2 className="mt-2 text-xl">Room Code: {this.props.session.roomID}</h2>
         {/* 
         <input
           placeholder="Your Name"
@@ -153,7 +163,6 @@ class Lobby extends Component {
           }}
         /> 
         */}
-        
 
         {/* game timer */}
         <div>
@@ -176,58 +185,66 @@ class Lobby extends Component {
         </h1>
 
         <Cam onResult={this.update}></Cam>
-        
 
-        <OTSession 
-          apiKey={this.props.session.apiKey} 
-          sessionId={this.props.session.sessionID} 
-          token={this.props.session.token}>
+        <OTSession
+          apiKey={this.props.session.apiKey}
+          sessionId={this.props.session.sessionID}
+          token={this.props.session.token}
+        >
           <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
-          <OTPublisher ß
-            className="col-span-1 rounded-lg overflow-hidden shadow-lg"/>
-          <OTStreams>
-            <OTSubscriber 
-              className="col-span-1 rounded-lg overflow-hidden shadow-lg"/>
-          </OTStreams>
+            <OTPublisher className="col-span-1 rounded-lg overflow-hidden shadow-lg" />
+            <OTStreams>
+              <OTSubscriber className="col-span-1 rounded-lg overflow-hidden shadow-lg" />
+            </OTStreams>
           </div>
         </OTSession>
 
         <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
-            <div className="col-span-1 rounded overflow-hidden">
-              {
-                this.state.gameStarted && !this.state.gameEnded ?
-               <span className={scoreToSize(this.state.counter.count)}>
+          <div className="col-span-1 rounded overflow-hidden">
+            {this.state.gameStarted && !this.state.gameEnded ? (
+              <span className={scoreToSize(this.state.counter.count)}>
                 {this.state.counter.count}
-                </span>
-                :
-              <button 
+              </span>
+            ) : (
+              <button
                 onClick={this.readyPlayer}
                 type="button"
                 className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
-                  ${this.state.ready ? 'bg-green-500' : 'bg-red-500'}
-                `}>
+                  ${this.state.ready ? "bg-green-500" : "bg-red-500"}
+                `}
+              >
+                Ready
+              </button>
+            )}
+          </div>
+          <div className="col-span-1 rounded overflow-hidden">
+            {this.state.opponentId ? (
+              this.state.gameStarted && !this.state.gameEnded ? (
+                <span
+                  className={scoreToSize(
+                    this.state.scores[this.state.opponentId]
+                  )}
+                >
+                  {this.state.scores[this.state.opponentId]}
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
+                  ${
+                    this.state.playersReady[this.state.opponentId]
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                  }
+                `}
+                >
                   Ready
-              </button> 
-               }
-            </div>
-            <div className="col-span-1 rounded overflow-hidden">
-            {this.state.opponentId ? 
-             this.state.gameStarted && !this.state.gameEnded ? 
-             <span className={scoreToSize(this.state.scores[this.state.opponentId])}>
-               {this.state.scores[this.state.opponentId]}
-             </span>
-              :
-              <button 
-                type="button"
-                className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
-                  ${this.state.playersReady[this.state.opponentId] ? 'bg-green-500' : 'bg-red-500'}
-                `}>
-                  Ready
-              </button> : null }
-            </div>
+                </button>
+              )
+            ) : null}
+          </div>
         </div>
       </div>
-      
     );
   }
 }
