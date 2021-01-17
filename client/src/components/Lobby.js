@@ -103,6 +103,21 @@ class Lobby extends Component {
     );
   }
 
+  reset() {
+    pushScore(0);
+    pushReady(false);
+    let scores = this.state.scores;
+    scores[this.state.id] = 0;
+    let playersReady = this.state.playersReady;
+    playersReady[this.state.id] = false;
+    this.setState({
+      counter: INITIAL_COUNTER,
+      ready: false,
+      scores: scores,
+      playersReady: playersReady,
+    });
+  }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateWindowDimensions);
   }
@@ -140,30 +155,21 @@ class Lobby extends Component {
     ) {
       startWidth = 0;
       canvasWidth = this.state.width;
-      this.setState({ confettiRunning: true });
-      // setTimeout(() => {
-      //   this.setState({ confettiRunning: false });
-      // }, 4000);
+      this.setState({ confettiRunning: true }, this.reset());
     } else if (
       this.state.scores[this.state.id] <
       this.state.scores[this.state.opponentId]
     ) {
       startWidth = this.state.width / 2;
       canvasWidth = this.state.width;
-      this.setState({ confettiRunning: true });
-      // setTimeout(() => {
-      //   this.setState({ confettiRunning: false });
-      // }, 4000);
+      this.setState({ confettiRunning: true }, this.reset());
     } else if (
       this.state.scores[this.state.id] ===
       this.state.scores[this.state.opponentId]
     ) {
       startWidth = 0;
       canvasWidth = this.state.width * 2;
-      this.setState({ confettiRunning: true });
-      // setTimeout(() => {
-      //   this.setState({ confettiRunning: false });
-      // }, 4000);
+      this.setState({ confettiRunning: true }, this.reset());
     }
   }
 
@@ -238,8 +244,8 @@ class Lobby extends Component {
         <div>
           {this.state.gameTimeEnd - Date.now() > 0 &&
           this.state.gameTimeEnd - Date.now() < gameLength ? (
-            <h1 className="text-xl">
-              Timer: {(this.state.gameTimeEnd - Date.now()) / 1000}
+            <h1 className="text-5xl">
+              Time Left: {(this.state.gameTimeEnd - Date.now()) / 1000}
             </h1>
           ) : null}
         </div>
