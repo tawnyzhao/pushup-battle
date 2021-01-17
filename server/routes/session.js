@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 let sessions = {
-  // roomID: {roomID: ID, SessionID: ID, Tokens: [Token..]}
+  // roomID: {apiKey: API_KEY, roomID: ID, SessionID: ID, Tokens: [Token..]}
 }
 
 const genID = () => {
@@ -35,7 +35,7 @@ router.get('/', function(req, res, next) {
     const token = opentok.generateToken(session.sessionId, tokenOptions);
 
     // save the session, room, and the requester's token
-    sessions[room] = {roomID: room, sessionID: session.sessionId, tokens: [token]};
+    sessions[room] = {apiKey: process.env.API_KEY, roomID: room, sessionID: session.sessionId, tokens: [token]};
 
     return res.json(sessions[room]);
   });
@@ -60,7 +60,7 @@ router.post('/', function(req, res, next) {
   // save token
   sessions[req.body.roomID].tokens.push(token);
 
-  return res.json({token: token, status: 'success'});
+  return res.json({apiKey: process.env.API_KEY, token: token, status: 'success'});
 });
 
 module.exports = router;
