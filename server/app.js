@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const debug = require("debug")("server:server");
 const http = require("http");
@@ -10,6 +11,7 @@ const cors = require("cors");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const connectRouter = require("./routes/connect");
+const sessionRouter = require("./routes/session");
 
 const app = express();
 const server = http.createServer(app);
@@ -30,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/connect", connectRouter);
+app.use("/session", sessionRouter);
 
 let scores = {};
 let names = {};
