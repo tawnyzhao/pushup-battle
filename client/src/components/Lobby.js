@@ -2,6 +2,7 @@ import { INITIAL_COUNTER, step } from "../util/fsm";
 import Cam from "./Cam";
 import React, { Component } from "react";
 import man from "../assets/images/pushupman.png";
+import pushdownman from "../assets/images/pushdownman.png";
 import Confetti from "react-confetti";
 import {
   socket,
@@ -65,6 +66,7 @@ class Lobby extends Component {
       width: 0,
       height: 0,
       confettiRunning: false,
+      playerPosition: 0,
     };
     this.update = this.update.bind(this);
     this.readyPlayer = this.readyPlayer.bind(this);
@@ -180,7 +182,7 @@ class Lobby extends Component {
       if (nextCounter.count !== this.state.counter.count) {
         pushScore(nextCounter.count);
       }
-      this.setState({ counter: nextCounter });
+      this.setState({ counter: nextCounter, playerPosition: nextState });
     } else {
       this.setState({});
     }
@@ -215,15 +217,29 @@ class Lobby extends Component {
         tweenDuration={20000}
       />
     ) : null;
+
+    let logo =
+      this.state.playerPosition === 2 && this.state.playerPosition != 4 ? (
+        <img
+          src={man}
+          className="w-20 mx-auto mt-20 align-baseline"
+          style={{ filter: "drop-shadow(0 0 5px #808080)" }}
+        ></img>
+      ) : (
+        <img
+          src={pushdownman}
+          className="w-20 mx-auto mt-20 align-baseline"
+          style={{ filter: "drop-shadow(0 0 5px #808080)" }}
+        ></img>
+      );
     return (
       <div className="mx-96">
         {confetti}
-        <div>
-          <img
-            src={man}
-            className="w-20 mx-auto mt-20"
-            style={{ filter: "drop-shadow(0 0 5px #808080)" }}
-          ></img>
+        <div
+          className="flex align-baseline mt-20 mb-5"
+          style={{ height: "50px", alignItems: "flex-end" }}
+        >
+          {logo}
         </div>
         <h1 className="text-6xl font-light pb-1">Pushup Battle</h1>
         <h2 className="mt-2 text-xl">Room Code: {this.props.session.roomID}</h2>

@@ -22,18 +22,18 @@ class Landing extends Component {
   }
 
   async handleSubmit(event) {
-    let res = await fetch(api + '/session', {
-      method: 'POST', 
-      mode: 'cors', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomID: this.state.id }) 
+    let res = await fetch(api + "/session", {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ roomID: this.state.id }),
     });
     let data = await res.json();
-    this.props.updateSession({...data, roomID: this.state.id});
+    this.props.updateSession({ ...data, roomID: this.state.id });
   }
 
   async create() {
-    let res = await fetch(api + '/session');
+    let res = await fetch(api + "/session");
     let data = await res.json();
     this.props.updateSession(data);
   }
@@ -69,7 +69,7 @@ class Landing extends Component {
               className="flex-grow py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-600 active:bg-blue-700 focus:outline-none"
               onClick={this.create}
             >
-              New Room  🥊
+              New Room 🥊
             </button>
           </div>
           <div className="pb-2 flex justify-center">
