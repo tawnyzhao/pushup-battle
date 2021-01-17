@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import pushupman from "../assets/images/pushupman.png";
-
 class Landing extends Component {
   constructor(props) {
     super(props);
@@ -14,16 +14,21 @@ class Landing extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-    async handleSubmit(event) {
-      let res = await fetch('http://localhost:9000/session', {
-        method: 'POST', 
-        mode: 'cors', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomID: this.state.id }) 
-      });
-      let data = await res.json();
-      this.props.updateSession({...data, roomID: this.state.id});
-    }
+  async componentDidMount() {
+    const id = this.props.match;
+    console.log(id);
+  }
+
+  async handleSubmit(event) {
+    let res = await fetch('http://localhost:9000/session', {
+      method: 'POST', 
+      mode: 'cors', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomID: this.state.id }) 
+    });
+    let data = await res.json();
+    this.props.updateSession({...data, roomID: this.state.id});
+  }
 
   async create() {
     let res = await fetch("http://localhost:9000/session");
@@ -87,4 +92,4 @@ class Landing extends Component {
   }
 }
 
-export default Landing;
+export default withRouter(Landing);

@@ -1,10 +1,12 @@
 .input_video {
   height: 0px;
   width: 0px;
+  display: none;
   visibility: hidden;
 }
 
 .output_canvas {
   height: 393.75px;
   width: 700px;
+  display: none;
 }

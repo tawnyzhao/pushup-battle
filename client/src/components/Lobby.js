@@ -14,6 +14,7 @@ import {
 } from "../util/socket";
 
 import { OTSession, OTPublisher, OTStreams, OTSubscriber, preloadScript } from 'opentok-react';
+import './OT.css';
 
 let gameLength = 10000;
 class Lobby extends Component {
@@ -93,9 +94,9 @@ class Lobby extends Component {
     return (
       <div className="mx-96">
         <div>
-          <img src={man} className="w-20 mx-auto my-5"></img>
+          <img src={man} className="w-20 mx-auto mt-8"></img>
         </div>
-        <h1 className="text-3xl">Score: {this.state.counter.count} </h1>
+        <h1 className="text-6xl">Pushup Battle</h1>
         <input
           placeholder="Your Name"
           type="text"
@@ -128,18 +129,30 @@ class Lobby extends Component {
             : null}
         </h1>
 
-        {/* displaying users and their scores */}
-        {Object.entries(this.state.scores).map(([id, score]) => (
-          <p>{`${this.state.names[id] || ""}: ${score}`}</p>
-        ))}
         <Cam onResult={this.update}></Cam>
-        <OTSession apiKey={this.props.session.apiKey} sessionId={this.props.session.sessionID} token={this.props.session.token}>
-          <OTPublisher />
-          <OTStreams>
-            <OTSubscriber />
-          </OTStreams>
-        </OTSession>
         
+
+        <OTSession 
+          apiKey={this.props.session.apiKey} 
+          sessionId={this.props.session.sessionID} 
+          token={this.props.session.token}>
+          <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
+          <OTPublisher ß
+            className="col-span-1 rounded overflow-hidden shadow-lg"/>
+          <OTStreams>
+            <OTSubscriber 
+              className="col-span-1 rounded overflow-hidden shadow-lg"/>
+          </OTStreams>
+          </div>
+        </OTSession>
+        <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
+            <div className="col-span-1 rounded overflow-hidden">
+              {this.state.counter.count}
+            </div>
+            <div className="col-span-1 rounded overflow-hidden">
+
+            </div>
+        </div>
       </div>
       
     );
