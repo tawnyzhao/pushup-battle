@@ -31,20 +31,34 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/connect", connectRouter);
 
-scores = {};
+let scores = {};
+let names = {};
+
+const DEFAULT_ROOM = "room1"
 
 io.on("connection", (socket) => {
-  socket.join("room1"); // only 1 room for now
-  socket.emit("pull score", scores),
+  socket.join(DEFAULT_ROOM); // only 1 room for now
+  io.to(DEFAULT_ROOM).emit("pull score", scores);
+  io.to(DEFAULT_ROOM).emit("pull name", names);
+
   socket.on("push score", (msg) => {
-    console.log(`new score ${socket.id}:${msg}`);
+    console.log(`new score ${socket.id}: ${msg}`);
     scores[socket.id] = msg;
-    io.to("room1").emit("pull score", scores);
+    io.to(DEFAULT_ROOM).emit("pull score", scores);
   });
+
+  socket.on("push name", (name) => {
+    console.log(`new score ${socket.id}: ${name}`);
+    names[socket.id] = name;
+    io.to(DEFAULT_ROOM).emit("pull name", names);
+  })
 
   socket.on("disconnecting", () => {
     delete scores[socket.id];
-    io.to("room1").emit("update score", scores);
+    delete names[socket.id];
+    io.to(DEFAULT_ROOM).emit("pull score", scores);
+    io.to(DEFAULT_ROOM).emit("pull name", names);
+
     console.log(`a user disconnected ${socket.id}`);
   });
 

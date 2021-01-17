@@ -15,10 +15,20 @@ function pullScore(callback) {
   socket.on('pull score', scores => callback(scores))
 }
 
+function pushName(name) {
+  socket.emit('push name', name)
+}
+
+function pullName(callback) {
+  socket.on('pull name', names => callback(names))
+}
+
 export {
   socket,
   onConnect,
   pushScore,
-  pullScore
+  pullScore,
+  pushName,
+  pullName,
 };
 
