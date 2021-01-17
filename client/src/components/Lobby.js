@@ -68,11 +68,12 @@ class Lobby extends Component {
       let ids = Object.keys(scores)
       if (ids.length === 2) {
         for (let id of ids) {
-          console.log(id, this.state.id)
           if (id !== this.state.id) {
             this.setState({ opponentId: id});
           }
         }
+      } else {
+        this.setState({ opponentId: ""});
       }
       this.setState({ scores });
     });
