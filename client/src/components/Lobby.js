@@ -2,6 +2,7 @@ import { INITIAL_COUNTER, step } from "../util/fsm";
 import Cam from "./Cam";
 import React, { Component } from "react";
 import man from "../assets/images/pushupman.png";
+import Confetti from "react-confetti";
 import {
   socket,
   pullScore,
@@ -25,6 +26,8 @@ import {
 import "./OT.css";
 
 let gameLength = 10000;
+let startWidth;
+let canvasWidth;
 
 function scoreToSize(score) {
   const CLASSES = [
@@ -59,13 +62,19 @@ class Lobby extends Component {
       gameEnded: false,
       gameTimeEnd: -1,
       countingDown: false,
+      width: 0,
+      height: 0,
+      confettiRunning: false,
     };
     this.update = this.update.bind(this);
     this.readyPlayer = this.readyPlayer.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
   componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener("resize", this.updateWindowDimensions);
     onConnect((id) => this.setState({ id }));
     socket.open();
 
@@ -94,11 +103,22 @@ class Lobby extends Component {
     );
   }
 
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+
   // handles setting gameEnded, gameStarted, and countingDown states based on current time
   componentDidUpdate() {
     if (this.state.gameStarted === true) {
       if (this.state.gameTimeEnd - Date.now() < 0) {
-        this.setState({ gameEnded: true, gameStarted: false });
+        this.setState(
+          { gameEnded: true, gameStarted: false },
+          this.startConfetti()
+        );
       } else if (
         this.state.gameTimeEnd - Date.now() >= gameLength &&
         this.state.countingDown === false
@@ -110,6 +130,40 @@ class Lobby extends Component {
       ) {
         this.setState({ countingDown: false });
       }
+    }
+  }
+
+  startConfetti() {
+    if (
+      this.state.scores[this.state.id] >
+      this.state.scores[this.state.opponentId]
+    ) {
+      startWidth = 0;
+      canvasWidth = this.state.width;
+      this.setState({ confettiRunning: true });
+      // setTimeout(() => {
+      //   this.setState({ confettiRunning: false });
+      // }, 4000);
+    } else if (
+      this.state.scores[this.state.id] <
+      this.state.scores[this.state.opponentId]
+    ) {
+      startWidth = this.state.width / 2;
+      canvasWidth = this.state.width;
+      this.setState({ confettiRunning: true });
+      // setTimeout(() => {
+      //   this.setState({ confettiRunning: false });
+      // }, 4000);
+    } else if (
+      this.state.scores[this.state.id] ===
+      this.state.scores[this.state.opponentId]
+    ) {
+      startWidth = 0;
+      canvasWidth = this.state.width * 2;
+      this.setState({ confettiRunning: true });
+      // setTimeout(() => {
+      //   this.setState({ confettiRunning: false });
+      // }, 4000);
     }
   }
 
@@ -140,9 +194,24 @@ class Lobby extends Component {
   }
 
   render() {
-    let leaderboard = <div></div>;
+    let confetti = this.state.confettiRunning ? (
+      <Confetti
+        width={this.state.width}
+        height={this.state.height}
+        confettiSource={{
+          x: startWidth,
+          y: 0,
+          w: canvasWidth / 2,
+          h: this.state.height,
+        }}
+        recycle={false}
+        numberOfPieces={600}
+        tweenDuration={20000}
+      />
+    ) : null;
     return (
       <div className="mx-96">
+        {confetti}
         <div>
           <img
             src={man}
