@@ -19,6 +19,24 @@ import { OTSession, OTPublisher, OTStreams, OTSubscriber, preloadScript } from '
 import './OT.css';
 
 let gameLength = 10000;
+
+function scoreToSize(score) {
+  const CLASSES = [
+    'text-lg', 
+    'text-xl', 
+    'text-2xl',
+    'text-3xl',
+    'text-4xl',
+    'text-5xl',
+    'text-6xl',
+    'text-7xl',
+    'text-8xl',
+    'text-9xl' 
+  ]
+  if (score >= CLASSES.length) return CLASSES[CLASSES.length - 1];
+  return CLASSES[score]
+}
+
 class Lobby extends Component {
   constructor(props) {
     super(props);
@@ -119,9 +137,11 @@ class Lobby extends Component {
     return (
       <div className="mx-96">
         <div>
-          <img src={man} className="w-20 mx-auto mt-8"></img>
+          <img src={man} className="w-20 mx-auto mt-20"></img>
         </div>
         <h1 className="text-6xl">Pushup Battle</h1>
+        <h2 className="mt-2 text-xl">Room Code:  {this.props.session.roomID}</h2>
+        {/* 
         <input
           placeholder="Your Name"
           type="text"
@@ -131,10 +151,9 @@ class Lobby extends Component {
             pushName(name);
             this.setState({ name });
           }}
-        />
-        <button onClick={this.readyPlayer} style={{backgroundColor: this.state.ready ? 'green' : 'red'}}>READY</button>
-        {this.state.opponentId ? 
-          <button style={{backgroundColor: this.state.playersReady[this.state.opponentId] ? 'green' : 'red'}}>READY</button> : null }
+        /> 
+        */}
+        
 
         {/* game timer */}
         <div>
@@ -165,19 +184,46 @@ class Lobby extends Component {
           token={this.props.session.token}>
           <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
           <OTPublisher ß
-            className="col-span-1 rounded overflow-hidden shadow-lg"/>
+            className="col-span-1 rounded-lg overflow-hidden shadow-lg"/>
           <OTStreams>
             <OTSubscriber 
-              className="col-span-1 rounded overflow-hidden shadow-lg"/>
+              className="col-span-1 rounded-lg overflow-hidden shadow-lg"/>
           </OTStreams>
           </div>
         </OTSession>
+
         <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
             <div className="col-span-1 rounded overflow-hidden">
-              {this.state.counter.count}
+              {
+                this.state.gameStarted && !this.state.gameEnded ?
+               <span className={scoreToSize(this.state.counter.count)}>
+                {this.state.counter.count}
+                </span>
+                :
+              <button 
+                onClick={this.readyPlayer}
+                type="button"
+                className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
+                  ${this.state.ready ? 'bg-green-500' : 'bg-red-500'}
+                `}>
+                  Ready
+              </button> 
+               }
             </div>
             <div className="col-span-1 rounded overflow-hidden">
-
+            {this.state.opponentId ? 
+             this.state.gameStarted && !this.state.gameEnded ? 
+             <span className={scoreToSize(this.state.scores[this.state.opponentId])}>
+               {this.state.scores[this.state.opponentId]}
+             </span>
+              :
+              <button 
+                type="button"
+                className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
+                  ${this.state.playersReady[this.state.opponentId] ? 'bg-green-500' : 'bg-red-500'}
+                `}>
+                  Ready
+              </button> : null }
             </div>
         </div>
       </div>
