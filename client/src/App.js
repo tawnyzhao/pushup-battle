@@ -1,24 +1,35 @@
-import Cam from './components/Cam';
-import { useState } from 'react';
-import './App.css';
-import { io } from 'socket.io-client';
-const socket = io('http://localhost:9000');
+import Cam from "./components/Cam";
+import { useState } from "react";
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import Lobby from "./components/Lobby";
+import Landing from "./components/Landing";
 
 function App() {
-  const [score, updateScore] = useState({});
-  
-  socket.on("connect", () => {
-    console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-  });
-  socket.on("pull score", updateScore);
-
-  
+  let [session, setSession] = useState({});
+  console.log(session);
   return (
-    <div className="App">
-      <header className="App-header">
-      </header>
-      <Cam></Cam>
-    </div>
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/:id">
+            <Lobby session={session} />
+          </Route>
+          <Route exact path="/">
+            {Object.keys(session).length != 0 ? (
+              <Redirect to={`/${session.roomID}`} />
+            ) : (
+              <Landing updateSession={setSession} />
+            )}
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
