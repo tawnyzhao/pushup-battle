@@ -106,18 +106,18 @@ class Lobby extends Component {
   }
 
   reset() {
-    pushScore(0);
-    pushReady(false);
-    let scores = this.state.scores;
-    scores[this.state.id] = 0;
-    let playersReady = this.state.playersReady;
-    playersReady[this.state.id] = false;
-    this.setState({
-      counter: INITIAL_COUNTER,
-      ready: false,
-      scores: scores,
-      playersReady: playersReady,
-    });
+    // pushScore(0);
+    // pushReady(false);
+    // let scores = this.state.scores;
+    // scores[this.state.id] = 0;
+    // let playersReady = this.state.playersReady;
+    // playersReady[this.state.id] = false;
+    // this.setState({
+    //   counter: INITIAL_COUNTER,
+    //   ready: false,
+    //   scores: scores,
+    //   playersReady: playersReady,
+    // });
   }
 
   componentWillUnmount() {
@@ -257,7 +257,7 @@ class Lobby extends Component {
         */}
 
         {/* game timer */}
-        <div style={{height: "3rem"}}>
+        <div style={{ height: "3rem" }}>
           {this.state.gameTimeEnd - Date.now() > 0 &&
           this.state.gameTimeEnd - Date.now() < gameLength ? (
             <React.Fragment>
@@ -266,14 +266,15 @@ class Lobby extends Component {
                 {(this.state.gameTimeEnd - Date.now()) / 1000}
               </h1>
             </React.Fragment>
-
           ) : null}
           {/* counting down */}
-          <h1 className="text-6xl"> 
+          <h1 className="text-6xl">
             {this.state.gameTimeEnd - Date.now() > gameLength &&
-            Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <= gameLength / 1000 + 5
-            ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) - gameLength / 1000 
-            : null }
+            Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <=
+              gameLength / 1000 + 5
+              ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) -
+                gameLength / 1000
+              : null}
           </h1>
         </div>
 
@@ -294,7 +295,7 @@ class Lobby extends Component {
 
         <div className="grid grid-cols-2 mt-16 gap-x-8 gap-y-8">
           <div className="col-span-1 rounded overflow-hidden">
-            {this.state.gameStarted && !this.state.gameEnded ? (
+            {this.state.gameStarted || this.state.gameEnded ? (
               <span className={scoreToSize(this.state.counter.count)}>
                 {this.state.counter.count}
               </span>
@@ -303,7 +304,11 @@ class Lobby extends Component {
                 onClick={this.readyPlayer}
                 type="button"
                 className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
-                  ${this.state.ready ? "bg-green-500" : "bg-red-500"}
+                  ${
+                    this.state.ready
+                      ? "bg-green-500 hover:bg-green-600 active:bg-green-700"
+                      : "bg-red-500 hover:bg-red-600 active:bg-red-700"
+                  }
                 `}
               >
                 Ready
@@ -312,7 +317,7 @@ class Lobby extends Component {
           </div>
           <div className="col-span-1 rounded overflow-hidden">
             {this.state.opponentId ? (
-              this.state.gameStarted && !this.state.gameEnded ? (
+              this.state.gameStarted || this.state.gameEnded ? (
                 <span
                   className={scoreToSize(
                     this.state.scores[this.state.opponentId]
@@ -326,8 +331,8 @@ class Lobby extends Component {
                   className={`px-4 py-2 text-white text-xl font-semibold rounded-lg shadow-lg focus:outline-none
                   ${
                     this.state.playersReady[this.state.opponentId]
-                      ? "bg-green-500"
-                      : "bg-red-500"
+                      ? "bg-green-500 hover:bg-green-600 active:bg-green-700"
+                      : "bg-red-500 hover:bg-red-600 active:bg-red-700"
                   }
                 `}
                 >
