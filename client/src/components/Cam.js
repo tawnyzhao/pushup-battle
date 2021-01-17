@@ -94,7 +94,7 @@ export default function Cam(props) {
 
       let currentState = STATES.NONE;
 
-      if (results.poseLandmarks != undefined) {
+      if (results.poseLandmarks !== undefined) {
         currentState = getState(
           results.poseLandmarks[14].y,
           results.poseLandmarks[14].x,
@@ -109,10 +109,10 @@ export default function Cam(props) {
         if (results.poseLandmarks[14].visibility < 0.6) {
           canvasCtx.fillText("None", 0, 0);
           canvasCtx.stroke();
-        } else if (currentState == STATES.UP) {
+        } else if (currentState === STATES.UP) {
           canvasCtx.fillText("Up", 0, 0);
           canvasCtx.stroke();
-        } else if (currentState == STATES.DOWN) {
+        } else if (currentState === STATES.DOWN) {
           canvasCtx.fillText("Down", 0, 0);
           canvasCtx.stroke();
         } else {
@@ -151,9 +151,9 @@ export default function Cam(props) {
   }, [props.onResult]);
 
   return (
-    <div class="container">
-      <video class="input_video"></video>
-      <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+    <div className="container">
+      <video className="input_video"></video>
+      <canvas className="output_canvas" width="1280px" height="720px"></canvas>
     </div>
   );
 }
