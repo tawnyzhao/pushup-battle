@@ -33,8 +33,9 @@ app.use("/connect", connectRouter);
 
 let scores = {};
 let names = {};
+let serverEndTime = 0;
 
-const DEFAULT_ROOM = "room1"
+const DEFAULT_ROOM = "room1";
 
 io.on("connection", (socket) => {
   socket.join(DEFAULT_ROOM); // only 1 room for now
@@ -48,10 +49,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("push name", (name) => {
-    console.log(`new score ${socket.id}: ${name}`);
+    console.log(`new name ${socket.id}: ${name}`);
     names[socket.id] = name;
     io.to(DEFAULT_ROOM).emit("pull name", names);
-  })
+  });
+
+  socket.on("push start", (endTime) => {
+    console.log(`new endTime ${socket.id}: ${endTime}`);
+    serverEndTime = endTime;
+    io.to(DEFAULT_ROOM).emit("pull start", serverEndTime);
+  });
 
   socket.on("disconnecting", () => {
     delete scores[socket.id];
