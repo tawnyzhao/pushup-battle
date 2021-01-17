@@ -13,6 +13,8 @@ import {
   pushStart,
 } from "../util/socket";
 
+import { OTSession, OTPublisher, OTStreams, OTSubscriber, preloadScript } from 'opentok-react';
+
 let gameLength = 10000;
 class Lobby extends Component {
   constructor(props) {
@@ -131,9 +133,17 @@ class Lobby extends Component {
           <p>{`${this.state.names[id] || ""}: ${score}`}</p>
         ))}
         <Cam onResult={this.update}></Cam>
+        <OTSession apiKey={this.props.session.apiKey} sessionId={this.props.session.sessionID} token={this.props.session.token}>
+          <OTPublisher />
+          <OTStreams>
+            <OTSubscriber />
+          </OTStreams>
+        </OTSession>
+        
       </div>
+      
     );
   }
 }
 
-export default Lobby;
+export default preloadScript(Lobby);

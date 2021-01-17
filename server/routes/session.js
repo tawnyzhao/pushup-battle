@@ -36,13 +36,14 @@ router.get('/', function(req, res, next) {
 
     // save the session, room, and the requester's token
     sessions[room] = {apiKey: process.env.API_KEY, roomID: room, sessionID: session.sessionId, tokens: [token]};
-
-    return res.json(sessions[room]);
+    
+    return res.json({...sessions[room], token});
   });
   //
 });
 
 router.post('/', function(req, res, next) {
+  console.log(sessions)
   if (!("roomID" in req.body)) return res.json({status: 'error'});
 
   // non existent room 
@@ -60,7 +61,7 @@ router.post('/', function(req, res, next) {
   // save token
   sessions[req.body.roomID].tokens.push(token);
 
-  return res.json({apiKey: process.env.API_KEY, token: token, status: 'success'});
+  return res.json({apiKey: process.env.API_KEY, token: token, status: 'success', sessionID});
 });
 
 module.exports = router;
