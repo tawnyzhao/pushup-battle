@@ -257,24 +257,25 @@ class Lobby extends Component {
         */}
 
         {/* game timer */}
-        <div>
+        <div style={{height: "3rem"}}>
           {this.state.gameTimeEnd - Date.now() > 0 &&
           this.state.gameTimeEnd - Date.now() < gameLength ? (
-            <h1 className="text-5xl">
-              Time Left: {(this.state.gameTimeEnd - Date.now()) / 1000}
-            </h1>
-          ) : null}
-        </div>
+            <React.Fragment>
+              <p>Time Left:</p>
+              <h1 className="text-5xl">
+                {(this.state.gameTimeEnd - Date.now()) / 1000}
+              </h1>
+            </React.Fragment>
 
-        {/* counting down */}
-        <h1 className="text-8xl">
-          {this.state.gameTimeEnd - Date.now() > gameLength &&
-          Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <=
-            gameLength / 1000 + 5
-            ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) -
-              gameLength / 1000
-            : null}
-        </h1>
+          ) : null}
+          {/* counting down */}
+          <h1 className="text-6xl"> 
+            {this.state.gameTimeEnd - Date.now() > gameLength &&
+            Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <= gameLength / 1000 + 5
+            ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) - gameLength / 1000 
+            : null }
+          </h1>
+        </div>
 
         <Cam onResult={this.update}></Cam>
 
