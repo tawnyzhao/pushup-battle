@@ -13,6 +13,7 @@ import {
   pushStart,
 } from "../util/socket";
 
+let gameLength = 10000;
 class Lobby extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +26,7 @@ class Lobby extends Component {
       gameStarted: false,
       gameEnded: false,
       gameTimeEnd: -1,
+      countingDown: false,
     };
     this.update = this.update.bind(this);
     this.startGame = this.startGame.bind(this);
@@ -46,22 +48,43 @@ class Lobby extends Component {
     );
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate() {
+    if (this.state.gameStarted === true) {
+      if (this.state.gameTimeEnd - Date.now() < 0) {
+        this.setState({ gameEnded: true, gameStarted: false });
+      } else if (
+        this.state.gameTimeEnd - Date.now() >= gameLength &&
+        this.state.countingDown === false
+      ) {
+        this.setState({ countingDown: true });
+      } else if (
+        this.state.gameTimeEnd - Date.now() <= gameLength &&
+        this.state.countingDown === true
+      ) {
+        this.setState({ countingDown: false });
+      }
+    }
+  }
 
   update(nextState) {
-    const nextCounter = step(this.state.counter, nextState);
-    if (nextCounter.count != this.state.counter.count) {
-      pushScore(nextCounter.count);
+    if (this.state.gameStarted && this.state.countingDown === false) {
+      const nextCounter = step(this.state.counter, nextState);
+      if (nextCounter.count != this.state.counter.count) {
+        pushScore(nextCounter.count);
+      }
+      this.setState({ counter: nextCounter });
+    } else {
+      this.setState({});
     }
-    this.setState({ counter: nextCounter });
   }
 
   startGame() {
-    let endDate = Date.now() + 35000;
+    let endDate = Date.now() + gameLength + 5000;
     pushStart(endDate);
   }
 
   render() {
+    let leaderboard = <div></div>;
     return (
       <div className="mx-96">
         <div>
@@ -79,18 +102,24 @@ class Lobby extends Component {
           }}
         />
         <button onClick={this.startGame}>START</button>
+
+        {/* game timer */}
         <div>
           {this.state.gameTimeEnd - Date.now() > 0 &&
-          this.state.gameTimeEnd - Date.now() < 30000 ? (
+          this.state.gameTimeEnd - Date.now() < gameLength ? (
             <h1 className="text-xl">
               Timer: {(this.state.gameTimeEnd - Date.now()) / 1000}
             </h1>
           ) : null}
         </div>
+
+        {/* counting down */}
         <h1 className="text-8xl">
-          {this.state.gameTimeEnd - Date.now() > 30000 &&
-          Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <= 35
-            ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) - 30
+          {this.state.gameTimeEnd - Date.now() > gameLength &&
+          Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) <=
+            gameLength / 1000 + 5
+            ? Math.ceil((this.state.gameTimeEnd - Date.now()) / 1000) -
+              gameLength / 1000
             : null}
         </h1>
         {Object.entries(this.state.scores).map(([id, score]) => (
