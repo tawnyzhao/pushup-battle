@@ -15,12 +15,13 @@ class Landing extends Component {
 
     async handleSubmit(event) {
       let res = await fetch('http://localhost:9000/session', {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'cors', // no-cors, *cors, same-origin
-        body: JSON.stringify({roomID:this.state.id}) // body data type must match "Content-Type" header
+        method: 'POST', 
+        mode: 'cors', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomID: this.state.id }) 
       });
       let data = await res.json();
-      this.props.updateSession({...data, id: this.state.id});
+      this.props.updateSession({...data, roomID: this.state.id});
     }
 
     async create() {
