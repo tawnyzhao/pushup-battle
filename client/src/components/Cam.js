@@ -9,6 +9,8 @@ import "./Cam.css";
 
 import { STATES, Counter } from "../util/fsm";
 
+let devMode = false;
+
 const POSE_CONNECTIONS = [
   [0, 1],
   [1, 2],
@@ -49,7 +51,7 @@ const POSE_CONNECTIONS = [
 
 function getState(p1y, p1x, p2y, p2x, p3y, p3x) {
   let downAngle = 2.1;
-  let upAngle = 2.5;
+  let upAngle = 2.4;
   let state = STATES["NONE"];
   let angle = Math.abs(
     Math.atan2(p3y - p1y, p3x - p1x) - Math.atan2(p2y - p1y, p2x - p1x)
@@ -71,53 +73,76 @@ export default function Cam(props) {
     const canvasCtx = canvasElement.getContext("2d");
 
     function onResults(results) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(
-        results.image,
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      );
-      drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-        color: "#00FF00",
-        lineWidth: 4,
-      });
-      drawLandmarks(canvasCtx, results.poseLandmarks, {
-        color: "#FF0000",
-        lineWidth: 2,
-      });
-      canvasCtx.font = 60 + "px " + "Arial";
-      canvasCtx.textAlign = "left";
-      canvasCtx.textBaseline = "top";
-
       let currentState = STATES.NONE;
 
       if (results.poseLandmarks !== undefined) {
-        currentState = getState(
-          results.poseLandmarks[14].y,
-          results.poseLandmarks[14].x,
-          results.poseLandmarks[16].y,
-          results.poseLandmarks[16].x,
-          results.poseLandmarks[12].y,
-          results.poseLandmarks[12].x
-        );
-        canvasCtx.stroke();
-
-        // display state on canvas
-        if (results.poseLandmarks[14].visibility < 0.6) {
-          canvasCtx.fillText("None", 0, 0);
-          canvasCtx.stroke();
-        } else if (currentState === STATES.UP) {
-          canvasCtx.fillText("Up", 0, 0);
-          canvasCtx.stroke();
-        } else if (currentState === STATES.DOWN) {
-          canvasCtx.fillText("Down", 0, 0);
-          canvasCtx.stroke();
+        let leftVisibility =
+          (results.poseLandmarks[11].visibility +
+            results.poseLandmarks[13].visibility +
+            results.poseLandmarks[15].visibility) /
+          3;
+        let rightVisibility =
+          (results.poseLandmarks[12].visibility +
+            results.poseLandmarks[14].visibility +
+            results.poseLandmarks[16].visibility) /
+          3;
+        if (leftVisibility > rightVisibility) {
+          currentState = getState(
+            results.poseLandmarks[13].y,
+            results.poseLandmarks[13].x,
+            results.poseLandmarks[15].y,
+            results.poseLandmarks[15].x,
+            results.poseLandmarks[11].y,
+            results.poseLandmarks[11].x
+          );
         } else {
-          canvasCtx.fillText("None", 0, 0);
+          currentState = getState(
+            results.poseLandmarks[14].y,
+            results.poseLandmarks[14].x,
+            results.poseLandmarks[16].y,
+            results.poseLandmarks[16].x,
+            results.poseLandmarks[12].y,
+            results.poseLandmarks[12].x
+          );
+        }
+
+        if (devMode == true) {
+          canvasCtx.save();
+          canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          canvasCtx.drawImage(
+            results.image,
+            0,
+            0,
+            canvasElement.width,
+            canvasElement.height
+          );
+          drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+            color: "#00FF00",
+            lineWidth: 4,
+          });
+          drawLandmarks(canvasCtx, results.poseLandmarks, {
+            color: "#FF0000",
+            lineWidth: 2,
+          });
+          canvasCtx.font = 60 + "px " + "Arial";
+          canvasCtx.textAlign = "left";
+          canvasCtx.textBaseline = "top";
+
           canvasCtx.stroke();
+          // display state on canvas
+          if (results.poseLandmarks[14].visibility < 0.6) {
+            canvasCtx.fillText("None", 0, 0);
+            canvasCtx.stroke();
+          } else if (currentState === STATES.UP) {
+            canvasCtx.fillText("Up", 0, 0);
+            canvasCtx.stroke();
+          } else if (currentState === STATES.DOWN) {
+            canvasCtx.fillText("Down", 0, 0);
+            canvasCtx.stroke();
+          } else {
+            canvasCtx.fillText("None", 0, 0);
+            canvasCtx.stroke();
+          }
         }
       }
       props.onResult(currentState);
@@ -135,8 +160,8 @@ export default function Cam(props) {
     pose.setOptions({
       upperBodyOnly: true,
       smoothLandmarks: true,
-      minDetectionConfidence: 0.4,
-      minTrackingConfidence: 0.8,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.9,
     });
     pose.onResults(onResults);
 

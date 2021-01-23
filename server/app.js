@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const debug = require("debug")("server:server");
 const http = require("http");
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/', indexRouter);
+app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/session", sessionRouter);
 
@@ -35,18 +35,19 @@ let scores = {};
 let names = {}; // not used
 let playersReady = {
   //  id: true | false
-}
+};
 let serverEndTime = 0;
+let gameTime = 15000;
 
 const DEFAULT_ROOM = "room1";
 
 io.on("connection", (socket) => {
   socket.join(DEFAULT_ROOM); // only 1 room for now
-  
+
   // init player
   scores[socket.id] = 0;
   playersReady[socket.id] = false;
-  
+
   // tell players ready state and ids
   io.to(DEFAULT_ROOM).emit("pull ready", playersReady);
   io.to(DEFAULT_ROOM).emit("pull score", scores);
@@ -76,9 +77,9 @@ io.on("connection", (socket) => {
     io.to(DEFAULT_ROOM).emit("pull ready", playersReady);
     // start game if all players ready
     if (Object.keys(playersReady).every((key) => playersReady[key])) {
-      let endtime = new Date().getTime() + 15000; // 3 sec countdown, 30 sec game
+      let endtime = new Date().getTime() + gameTime + 5000; // 5 second countdown
       io.to(DEFAULT_ROOM).emit("pull start", endtime);
-    };
+    }
   });
 
   socket.on("disconnecting", () => {
@@ -87,7 +88,6 @@ io.on("connection", (socket) => {
     delete playersReady[socket.id];
     io.to(DEFAULT_ROOM).emit("pull score", scores);
     io.to(DEFAULT_ROOM).emit("pull name", names);
-
     console.log(`a user disconnected ${socket.id}`);
   });
 
